@@ -5,3 +5,8 @@ langdetect
 groq
 google-genai
 fpdf2
+fastapi==0.110.0
+uvicorn==0.29.0
+pydantic==2.6.4
+email-validator==2.1.1
+python-dotenv==1.0.1
