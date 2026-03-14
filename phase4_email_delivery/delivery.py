@@ -1,9 +1,8 @@
 import json
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from datetime import datetime
 import os
+import resend
+from datetime import datetime
+from dotenv import load_dotenv
 
 def generate_sparkline(trend_data: list) -> str:
     """Converts a list of dicts with 'avgRating' into an ASCII sparkline string."""
@@ -24,12 +23,10 @@ def generate_sparkline(trend_data: list) -> str:
         
     return sparkline_str
 
-def send_pulse_email(pulse: dict, sender_email: str, app_password: str, recipient_email: str):
+def generate_email_html(pulse: dict) -> str:
     """
-    Converts the Weekly Pulse JSON into a styled HTML email and sends it via SMTP.
+    Generates the HTML body for the Weekly Pulse email.
     """
-    
-    # 1. Generate HTML Body
     themes_html = "".join([
         f"<p><strong>{t['rank']}. {t['name']}</strong> &nbsp; "
         f"{'🔴' if t['sentiment']=='negative' else '🟢' if t['sentiment']=='positive' else '🟡'} "
@@ -99,48 +96,70 @@ def send_pulse_email(pulse: dict, sender_email: str, app_password: str, recipien
     </body>
     </html>
     """
+    return html_body
 
-    # 2. Configure Email Headers
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"📊 Groww Weekly Review Pulse — {datetime.now().strftime('%d %b %Y')}"
-    msg["From"] = sender_email
-    msg["To"] = recipient_email
+def send_pulse_email(pulse_data: dict, recipient_email: str = None) -> bool:
+    """
+    Sends the Pulse report via Resend API.
+    """
+    resend.api_key = os.environ.get("RESEND_API_KEY")
+
+    if not resend.api_key:
+        print("Error: RESEND_API_KEY not found in environment variables.")
+        return False
+        
+    if not recipient_email:
+        recipient_email = os.environ.get("RECIPIENT_EMAIL")
     
-    # 3. Attach HTML content
-    msg.attach(MIMEText(html_body, "html", "utf-8"))
+    if not recipient_email:
+        print("Error: RECIPIENT_EMAIL not provided or found in environment variables.")
+        return False
 
-    # 4. Send via SMTP (Defaulting to Gmail)
-    recipients = [r.strip() for r in recipient_email.split(",")]
-    print(f"Connecting to SMTP server to send email to {', '.join(recipients)}...")
+    # If it's a comma-separated string from GitHub Secrets, split it
+    recipients = [email.strip() for email in recipient_email.split(',')] if ',' in recipient_email else [recipient_email]
+
+    print(f"Generating HTML report for {len(pulse_data.get('top_3_themes', []))} themes...")
+    html_content = generate_email_html(pulse_data)
+
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(sender_email, app_password)
-            server.sendmail(sender_email, recipients, msg.as_string())
-        print("✅ Email sent successfully!")
+        print(f"Sending email via Resend to {recipients}...")
+        
+        params: resend.Emails.SendParams = {
+            "from": "onboarding@resend.dev", # Default Resend 'from' address
+            "to": recipients,
+            "subject": f"📊 Groww Weekly Review Pulse — {datetime.now().strftime('%d %b %Y')}",
+            "html": html_content,
+        }
+
+        email = resend.Emails.send(params)
+        print("✅ Successfully sent email via Resend!")
+        print(f"Resend ID: {email['id']}")
+        return True
+
     except Exception as e:
-        print(f"❌ Failed to send email: {e}")
-        raise e
+        print(f"❌ Failed to send email: {str(e)}")
+        return False
 
 if __name__ == "__main__":
-    # Test execution
-    sender = os.environ.get("GMAIL_ADDRESS")
-    password = os.environ.get("GMAIL_APP_PASSWORD")
-    recipient = os.environ.get("RECIPIENT_EMAIL", sender) # Default to sending to self if not specified
-    
-    if not sender or not password:
-        print("Error: GMAIL_ADDRESS or GMAIL_APP_PASSWORD environment variables are not set.")
-        print("Please run:")
-        print("export GMAIL_ADDRESS='your-email@gmail.com'")
-        print("export GMAIL_APP_PASSWORD='your-app-password'")
-    else:
-        try:
-            # Load the pulse generated in Phase 3
-            with open("../phase3_weekly_note/weekly_pulse_sample.json", "r") as f:
-                pulse_data = json.load(f)
-                
-            print(f"Loaded generated pulse for {pulse_data.get('date_range')}.")
-            send_pulse_email(pulse_data, sender, password, recipient)
+    load_dotenv() # Load environment variables from .env file
+
+    if not os.environ.get("RESEND_API_KEY"):
+        print("Error: RESEND_API_KEY environment variable is not set.")
+        exit(1)
+
+    try:
+        # Load a sample from phase 3
+        with open('phase3_weekly_note/weekly_pulse_sample.json', 'r') as f:
+            sample_pulse = json.load(f)
+
+        print("Initiating test email delivery...")
+        success = send_pulse_email(sample_pulse)
+        
+        if success:
+            print("Test complete.")
+        else:
+            print("Test failed.")
             
-        except FileNotFoundError:
-            print("Error: weekly_pulse_sample.json not found.")
-            print("Please run Phase 3 generation first.")
+    except FileNotFoundError:
+        print("Error: data/weekly_pulse.json not found.")
+        print("Please run Phase 3 generation first.")

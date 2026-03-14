@@ -43,10 +43,8 @@ class AnalyzeRequest(BaseModel):
     gemini_api_key: Optional[str] = None
 
 class EmailRequest(BaseModel):
-    recipient_email: EmailStr
+    recipient_email: str
     pulse_data: dict # The JSON output from the analyze endpoint
-    sender_email: Optional[str] = None
-    app_password: Optional[str] = None
 
 # --- Endpoints ---
 
@@ -124,24 +122,20 @@ def analyze_reviews(request: AnalyzeRequest):
 @app.post("/api/v1/email")
 def send_email(request: EmailRequest):
     """
-    Executes Phase 4: Emails the generated pulse report.
+    Executes Phase 4: Emails the generated pulse report via Resend API.
     """
-    sender = request.sender_email or os.environ.get("GMAIL_ADDRESS")
-    password = request.app_password or os.environ.get("GMAIL_APP_PASSWORD")
+    if not os.environ.get("RESEND_API_KEY"):
+        raise HTTPException(status_code=500, detail="Missing RESEND_API_KEY in environment variables.")
 
-    if not sender or not password:
-        raise HTTPException(status_code=401, detail="Missing Gmail credentials in both request and .env file.")
-
-    print(f"[API] Starting Phase 4: Sending email to {request.recipient_email}...")
-    try:
-        send_pulse_email(
-            pulse=request.pulse_data,
-            sender_email=sender,
-            app_password=password,
-            recipient_email=request.recipient_email
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Phase 4 Email Delivery Failed: {str(e)}")
+    print(f"[API] Starting Phase 4: Sending email to {request.recipient_email} via Resend...")
+    
+    success = send_pulse_email(
+        pulse_data=request.pulse_data,
+        recipient_email=request.recipient_email
+    )
+    
+    if not success:
+        raise HTTPException(status_code=500, detail="Phase 4 Email Delivery Failed via Resend API")
         
     return {"status": "success", "message": f"Email successfully delivered to {request.recipient_email}"}
 
