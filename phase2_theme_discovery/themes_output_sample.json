@@ -1,0 +1,54 @@
+{
+  "themes": [
+    {
+      "name": "Technical Issues and Bugs",
+      "description": "Users experience frequent bugs, crashes, and technical errors while using the app.",
+      "review_count": 15,
+      "sentiment": "negative",
+      "top_quotes": [
+        "Many bugs are coming while trading in apps and they are irritating me.",
+        "External funds tracking has been paused which was one of the USP of this app."
+      ]
+    },
+    {
+      "name": "Customer Support and Responsiveness",
+      "description": "Users express frustration with slow or unresponsive customer support.",
+      "review_count": 10,
+      "sentiment": "negative",
+      "top_quotes": [
+        "customer care is verey slow, not responding on time, showing wrong data.",
+        "Terrible experience the app auto-liquidated my mutual funds and refuses to provide any update on the liquidated amount"
+      ]
+    },
+    {
+      "name": "Performance and Speed",
+      "description": "Users experience slow app performance, lag, and delayed transactions.",
+      "review_count": 8,
+      "sentiment": "negative",
+      "top_quotes": [
+        "speed slow, & devidend receiving problem.",
+        "It becomes laggy some time"
+      ]
+    },
+    {
+      "name": "Charges and Fees",
+      "description": "Users express dissatisfaction with high brokerage fees and charges.",
+      "review_count": 7,
+      "sentiment": "negative",
+      "top_quotes": [
+        "worst app, very high brokerage, and also very worst in order execution",
+        "Not at all useful for trading platforms, they are taking tax and other charges from my earned stocks which sucks"
+      ]
+    },
+    {
+      "name": "User Experience and Features",
+      "description": "Users praise the app's ease of use, but also request additional features and improvements.",
+      "review_count": 15,
+      "sentiment": "mixed",
+      "top_quotes": [
+        "I love this app! It's easy to use and I can be me without worrying about being judged!",
+        "please provide essay mobile number and email change options unlimited time"
+      ]
+    }
+  ]
+}

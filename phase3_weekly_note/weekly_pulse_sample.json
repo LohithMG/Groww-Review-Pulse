@@ -1,0 +1,41 @@
+{
+  "title": "Groww Weekly Review Pulse",
+  "date_range": "08 Mar \u2013 09 Mar 2026",
+  "total_reviews": 50,
+  "avg_rating": 3.0,
+  "overall_sentiment": "negative",
+  "top_3_themes": [
+    {
+      "rank": 1,
+      "name": "Technical Issues and Bugs",
+      "review_count": 15,
+      "sentiment": "negative",
+      "summary": "Users frequently encounter severe bugs, crashes, and critical technical errors disrupting app functionality, especially during trading."
+    },
+    {
+      "rank": 2,
+      "name": "User Experience and Features",
+      "review_count": 15,
+      "sentiment": "mixed",
+      "summary": "While ease of use is appreciated, users are requesting crucial feature additions and improvements, including the restoration of key functionalities."
+    },
+    {
+      "rank": 3,
+      "name": "Customer Support and Responsiveness",
+      "review_count": 10,
+      "sentiment": "negative",
+      "summary": "Frustration is high due to slow, unresponsive customer support and a lack of timely updates on critical financial issues."
+    }
+  ],
+  "top_3_quotes": [
+    "Terrible experience the app auto-liquidated my mutual funds and refuses to provide any update on the liquidated amount",
+    "Many bugs are coming while trading in apps and they are irritating me.",
+    "External funds tracking has been paused which was one of the USP of this app."
+  ],
+  "top_3_actions": [
+    "Immediately launch a crisis resolution sprint to hotfix critical trading bugs and investigate incidents like unauthorized fund liquidations.",
+    "Implement stringent SLAs for customer support response and resolution times, specifically for financial disputes and urgent inquiries.",
+    "Prioritize performance optimization to mitigate app lag and speed issues; concurrently, evaluate reinstating or addressing the gap left by 'external funds tracking'."
+  ],
+  "word_count": 202
+}
