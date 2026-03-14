@@ -31,7 +31,6 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
         GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        # Automatically sends the email to the same address sending it, unless RECIPIENT_EMAIL is also defined dynamically.
-        RECIPIENT_EMAIL: ${{ secrets.GMAIL_ADDRESS }}
+        RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       run: |
         python run_pipeline.py

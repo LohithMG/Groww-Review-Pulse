@@ -110,11 +110,12 @@ def send_pulse_email(pulse: dict, sender_email: str, app_password: str, recipien
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 
     # 4. Send via SMTP (Defaulting to Gmail)
-    print(f"Connecting to SMTP server to send email to {recipient_email}...")
+    recipients = [r.strip() for r in recipient_email.split(",")]
+    print(f"Connecting to SMTP server to send email to {', '.join(recipients)}...")
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, app_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+            server.sendmail(sender_email, recipients, msg.as_string())
         print("✅ Email sent successfully!")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
