@@ -13,7 +13,36 @@
 
 ---
 
-## 2. Phase-Wise Architecture
+## 2. System Architecture Diagram
+
+```mermaid
+graph TD
+    User([User / PM]) -->|Configures & Triggers| ReactFrontend[React Frontend<br/>Vercel]
+    ReactFrontend -->|REST API Calls| FastAPI[FastAPI Backend<br/>Render]
+    
+    subgraph "Phase 1: Ingestion"
+        FastAPI -->|Scrapes| PlayStore[(Google Play Store)]
+        FastAPI -->|Scrapes| AppStore[(Apple App Store)]
+    end
+    
+    subgraph "Phase 2 & 3: AI Pipeline"
+        FastAPI -->|Batch Reviews| Groq[Groq API<br/>Theme Discovery]
+        Groq -->|Themes & Classifications| FastAPI
+        FastAPI -->|Themes + Top Quotes| Gemini[Gemini API<br/>Synthesis]
+        Gemini -->|Markdown Report| FastAPI
+    end
+    
+    subgraph "Phase 4: Delivery"
+        FastAPI -->|Generated HTML| Resend[Resend API<br/>Email Delivery]
+        Resend -->|Email| Inbox([Stakeholder Inbox])
+    end
+    
+    FastAPI -->|Returns JSON Pulse Data| ReactFrontend
+```
+
+---
+
+## 3. Phase-Wise Architecture
 
 ### Phase 1: Review Ingestion and Cleaning
 **Objective:** Fetch, filter, and normalize review data from public stores.
@@ -66,7 +95,7 @@
 
 ---
 
-## 3. Tech Stack Summary
+## 4. Tech Stack Summary
 - **Backend API / Scripting:** Python, FastAPI, Uvicorn, Pandas
 - **Data Scraping:** `google-play-scraper`, `app-store-scraper`
 - **AI Models:** 
