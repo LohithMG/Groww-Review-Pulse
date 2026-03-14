@@ -3,5 +3,5 @@ pandas
 google-play-scraper
 langdetect
 groq
-google-generativeai
+google-genai
 fpdf2
