@@ -18,7 +18,7 @@ function App() {
     setPulseData(null);
     setEmailStatus(null);
     try {
-      const response = await fetch('http://localhost:8000/api/v1/analyze', {
+      const response = await fetch('https://groww-review-pulse-api.onrender.com/api/v1/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ function App() {
     setEmailStatus(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/email', {
+      const response = await fetch('https://groww-review-pulse-api.onrender.com/api/v1/email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
